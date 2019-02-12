@@ -1,7 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using LoanManagement.Controllers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LoanManagement;
-using LoanManagement.Controllers;
+using System.Web.Mvc;
 
 namespace LoanManagement.Tests.Controllers
 {
@@ -13,10 +12,8 @@ namespace LoanManagement.Tests.Controllers
         {
             // Arrange
             HomeController controller = new HomeController();
-
             // Act
             ViewResult result = controller.Index() as ViewResult;
-
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Home Page", result.ViewBag.Title);
