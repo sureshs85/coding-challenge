@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -21,33 +22,51 @@ namespace LoanManagement.Data.Repository
         }
         public IEnumerable<T> GetAll()
         {
-            System.Data.Common.DbCommand command = Database.GetSqlStringCommand(GetAllQuery);
             List<T> list = new List<T>();
-            using (IDataReader dataReader = Database.ExecuteReader(command))
+            try
             {
-                while (dataReader.Read())
+                System.Data.Common.DbCommand command = Database.GetSqlStringCommand(GetAllQuery);
+                using (IDataReader dataReader = Database.ExecuteReader(command))
                 {
-                    list.Add(Populate(dataReader));
+                    while (dataReader.Read())
+                    {
+                        list.Add(Populate(dataReader));
+                    }
                 }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Log(ex);
             }
             return list;
+
         }
         public T Get(int id)
         {
-            System.Data.Common.DbCommand command = Database.GetSqlStringCommand(GetQuery);
-            System.Data.Common.DbParameter param = command.CreateParameter();
-            param.ParameterName = "@id";
-            param.Value = id;
-            command.Parameters.Add(param);
-
             T record = null;
-            using (IDataReader dataReader = Database.ExecuteReader(command))
+            try
             {
-                while (dataReader.Read())
+                System.Data.Common.DbCommand command = Database.GetSqlStringCommand(GetQuery);
+                System.Data.Common.DbParameter param = command.CreateParameter();
+                param.ParameterName = "@id";
+                param.Value = id;
+                command.Parameters.Add(param);
+
+
+                using (IDataReader dataReader = Database.ExecuteReader(command))
                 {
-                    record = Populate(dataReader);
-                    break;
+                    while (dataReader.Read())
+                    {
+                        record = Populate(dataReader);
+                        break;
+                    }
                 }
+                return record;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Log(ex);
             }
             return record;
         }
