@@ -1,13 +1,13 @@
-﻿using log4net;
-using System;
-using System.Reflection;
-
-namespace LoanManagement
+﻿namespace LoanManagement
 {
+    using log4net;
+    using System;
+    using System.Reflection;
+
     public class Logger
     {
         private static Logger instance;
-        protected readonly ILog LOG = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        protected readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private Logger() { }
 
@@ -25,15 +25,15 @@ namespace LoanManagement
 
         public void Log(string msg)
         {
-            LOG.Error(msg);
+            _log.Error(msg);
         }
         public void Log(string msg, Exception ex)
         {
-            LOG.Error(msg, ex);
+            _log.Error(msg, ex);
         }
         public void Log(Exception ex)
         {
-            LOG.Error(ex);
+            _log.Error(ex);
         }
     }
 }

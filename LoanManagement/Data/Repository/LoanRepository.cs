@@ -2,14 +2,19 @@
 {
     using Data.Const;
     using Data.Model;
+    using Interface;
     using System;
     using System.Data;
 
-    public class LoanRepository : Repository<LoanModel>
+    public class LoanRepository : Repository<LoanModel>, ILoanRepository
     {
         protected override string GetQuery => LoanConst.GetQuery;
         protected override string GetAllQuery => LoanConst.GetAllQuery;
-
+        /// <summary>
+        /// Method is to bind the value of the Loan Modal object retrieved from DB
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns>LoanModel object</returns>
         public override LoanModel Populate(IDataReader reader)
         {
             try
@@ -28,8 +33,8 @@
             catch (Exception ex)
             {
                 Logger.Instance.Log(ex);
+                throw new Exception("Error Occurred, Please contact admin...");
             }
-            return new LoanModel();
         }
     }
 }

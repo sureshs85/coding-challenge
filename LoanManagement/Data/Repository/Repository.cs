@@ -1,10 +1,11 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Data;
-using System;
-using System.Collections.Generic;
-using System.Data;
-
-namespace LoanManagement.Data.Repository
+﻿namespace LoanManagement.Data.Repository
 {
+    using Microsoft.Practices.EnterpriseLibrary.Data;
+    using MySql.Data.MySqlClient;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+
     public abstract class Repository<T> where T : class
     {
         protected abstract string GetQuery { get; }
@@ -20,12 +21,16 @@ namespace LoanManagement.Data.Repository
         {
             return null;
         }
+        /// <summary>
+        /// Generic method to retrieve all the entities
+        /// </summary>
+        /// <returns>List of entities</returns>
         public IEnumerable<T> GetAll()
         {
             List<T> list = new List<T>();
             try
             {
-                System.Data.Common.DbCommand command = Database.GetSqlStringCommand(GetAllQuery);
+                System.Data.Common.DbCommand command = Database.GetStoredProcCommand(GetAllQuery);
                 using (IDataReader dataReader = Database.ExecuteReader(command))
                 {
                     while (dataReader.Read())
@@ -35,25 +40,32 @@ namespace LoanManagement.Data.Repository
                 }
                 return list;
             }
+            catch (MySqlException myEx)
+            {
+                Logger.Instance.Log(myEx);
+                throw myEx;
+            }
             catch (Exception ex)
             {
                 Logger.Instance.Log(ex);
+                throw ex;
             }
-            return list;
 
         }
+        /// <summary>
+        /// Generic method to retrieve one single entity with Id
+        /// </summary>
+        /// <returns>single entity</returns>
         public T Get(int id)
         {
             T record = null;
             try
             {
-                System.Data.Common.DbCommand command = Database.GetSqlStringCommand(GetQuery);
+                System.Data.Common.DbCommand command = Database.GetStoredProcCommand(GetQuery);
                 System.Data.Common.DbParameter param = command.CreateParameter();
                 param.ParameterName = "@id";
                 param.Value = id;
                 command.Parameters.Add(param);
-
-
                 using (IDataReader dataReader = Database.ExecuteReader(command))
                 {
                     while (dataReader.Read())
@@ -64,11 +76,16 @@ namespace LoanManagement.Data.Repository
                 }
                 return record;
             }
+            catch (MySqlException myEx)
+            {
+                Logger.Instance.Log(myEx);
+                throw myEx;
+            }
             catch (Exception ex)
             {
                 Logger.Instance.Log(ex);
+                throw ex;
             }
-            return record;
         }
     }
 
